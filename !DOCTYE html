@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة الاختبارات السحابية للفيزياء | Physics Cloud Exam</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght=300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        oman: {
+                            navy: '#0b192f',
+                            navyLight: '#172a45',
+                            gold: '#d4af37',
+                            goldHover: '#bca02d',
+                            cream: '#fdfbf7',
+                            slate: '#64748b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Cairo', sans-serif; transition: background-color 0.3s, color 0.3s; }
+        
+        body.theme-dark { background-color: #070f1e; color: #f1f5f9; }
+        body.theme-dark .bg-card { background-color: #0b192f; border-color: rgba(212, 175, 55, 0.15); }
+        body.theme-dark .bg-input { background-color: #172a45; border-color: #1e3a8a; color: #ffffff; }
+        body.theme-dark select option { background-color: #172a45; color: #ffffff; }
+        
+        body.theme-light { background-color: #f8fafc; color: #0f172a; }
+        body.theme-light .bg-card { background-color: #ffffff; border-color: #e2e8f0; box-shadow: 0 4px 20px -2px rgba(0,0,0,0.05); }
+        body.theme-light .bg-input { background-color: #f1f5f9; border-color: #cbd5e1; color: #0f172a; }
+        body.theme-light select option { background-color: #ffffff; color: #0f172a; }
+        
+        select { appearance: none; -webkit-appearance: none; cursor: pointer; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 3px; }
+        .no-select { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+        canvas { touch-action: none; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between no-select theme-dark">
+
+    <header class="bg-oman-navy border-b border-oman-gold/20 sticky top-0 z-50 px-4 py-3 shadow-xl">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-oman-gold/10 border border-oman-gold rounded-xl flex items-center justify-center text-oman-gold text-xl overflow-hidden">
+                    <img id="navTeacherPhoto" src="" class="w-full h-full object-cover hidden">
+                    <i id="navDefaultIcon" class="fa-solid fa-user-tie"></i>
+                </div>
+                <div>
+                    <h1 class="text-md font-bold text-white" id="navQuizTitle">نظام الاختبارات التفاعلي السحابي</h1>
+                    <p class="text-[10px] text-oman-gold">تطوير المنظومة التعليمية الرقمية | الأستاذ إبرام محمد</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <button type="button" onclick="toggleTheme()" class="bg-oman-navyLight border border-slate-700 hover:border-oman-gold text-oman-gold px-3 py-1.5 rounded-xl text-xs transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-circle-half-stroke text-sm"></i>
+                    <span class="text-[11px] font-bold">مظهر الصفحة</span>
+                </button>
+
+                <div class="flex bg-oman-navyLight p-1 rounded-xl border border-slate-700">
+                    <button type="button" onclick="switchView('teacher')" id="btnTeacherView" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all bg-oman-gold text-oman-navy">
+                        <i class="fa-solid fa-chalkboard-user ml-1"></i> لوحة التحكم
+                    </button>
+                    <button type="button" onclick="switchView('student')" id="btnStudentView" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white">
+                        <i class="fa-solid fa-user-graduate ml-1"></i> شاشة الطالب
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow p-4 md:p-8 max-w-7xl w-full mx-auto relative">
+        
+        <section id="teacherSection" class="space-y-8 transition-all duration-300 block">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <div class="lg:col-span-1 bg-card border p-6 rounded-2xl shadow-xl space-y-4">
+                    <h3 class="text-sm font-bold text-oman-gold border-b border-slate-800/60 pb-2 flex justify-between">
+                        <span><i class="fa-solid fa-gear ml-1"></i> إعدادات الاختبار</span>
+                        <span class="font-mono text-[11px]">Settings</span>
+                    </h3>
+                    
+                    <div class="bg-input/50 p-4 rounded-xl border border-slate-700/50 space-y-3">
+                        <label class="block text-xs text-oman-gold font-bold mb-1">
+                            <i class="fa-solid fa-camera-retro ml-1"></i> صورة واجهة الطالب:
+                        </label>
+                        <div class="flex items-center gap-4">
+                            <div class="relative w-16 h-16 rounded-full bg-oman-navy border-2 border-oman-gold/50 flex items-center justify-center overflow-hidden shadow-inner">
+                                <img id="teacherPhotoPreview" src="" class="w-full h-full object-cover hidden">
+                                <i id="teacherPhotoIcon" class="fa-solid fa-user-tie text-3xl text-slate-600"></i>
+                            </div>
+                            <div class="flex-grow space-y-2">
+                                <input type="file" id="teacherPhotoInput" accept="image/*" onchange="uploadTeacherPhoto(this)" class="block w-full text-[10px] text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-[10px] file:font-semibold file:bg-oman-gold/20 file:text-oman-gold hover:file:bg-oman-gold/30 cursor-pointer">
+                                <button type="button" onclick="removeTeacherPhoto()" id="btnRemovePhoto" class="hidden text-red-400 hover:text-red-300 text-[10px] flex items-center gap-1">
+                                    <i class="fa-solid fa-trash-can"></i> حذف الصورة
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs mb-1 font-bold">عنوان الاختبار:</label>
+                        <input type="text" id="quizTitleInput" oninput="updateSettings()" class="w-full bg-input border rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-oman-gold" value="اختبار الفيزياء">
+                    </div>
+                    <div>
+                        <label class="block text-xs mb-1 font-bold">المادة الدراسية:</label>
+                        <input type="text" id="quizSubjectInput" oninput="updateSettings()" class="w-full bg-input border rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-oman-gold" value="الفيزياء / Physics">
+                    </div>
+                    <div>
+                        <label class="block text-xs mb-1 font-bold">زمن الاختبار بالدقائق:</label>
+                        <input type="number" id="quizDurationInput" oninput="updateSettings()" class="w-full bg-input border rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-oman-gold" value="30">
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2 bg-card border p-6 rounded-2xl shadow-xl space-y-4">
+                    <h3 class="text-sm font-bold text-oman-gold border-b border-slate-800/60 pb-2 flex justify-between">
+                        <span><i class="fa-solid fa-plus-circle ml-1"></i> بناء وإضافة سؤال جديد</span>
+                        <span class="font-mono text-[11px]">Add Question</span>
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="block text-xs mb-1 font-bold">نص السؤال الرئيسي أو رأس المسألة:</label>
+                            <textarea id="qTextInput" rows="2" placeholder="اكتب صيغة السؤال أو رأس المسألة الفيزيائية هنا..." class="w-full bg-input border rounded-xl p-3 text-xs focus:outline-none focus:border-oman-gold"></textarea>
+                        </div>
+                        <div class="relative">
+                            <label class="block text-xs mb-1 font-bold">نوع السؤال / Question Type:</label>
+                            <select id="qTypeInput" onchange="toggleOptionsVisibility()" class="w-full bg-input border rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-oman-gold">
+                                <option value="mcq">اختيار من متعدد (MCQ)</option>
+                                <option value="essay_multipart">سؤال مقالي / قصير مقسم (يتضمن سبورة إجابة)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs mb-1 font-bold">الدرجة الكلية للسؤال:</label>
+                            <input type="number" id="qMarksInput" class="w-full bg-input border rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-oman-gold" value="1">
+                        </div>
+
+                        <div class="md:col-span-2 bg-input/40 p-4 rounded-xl border border-dashed border-slate-600">
+                            <label class="block text-xs text-oman-gold font-bold mb-1">
+                                <i class="fa-regular fa-image ml-1"></i> إرفاق صورة أو رسمة هندسية للمسألة (اختياري):
+                            </label>
+                            <input type="file" id="qImageInput" accept="image/*" class="block w-full text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-oman-gold/20 file:text-oman-gold hover:file:bg-oman-gold/30 cursor-pointer">
+                        </div>
+
+                        <div id="mcqOptionsArea" class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-3 bg-input/20 p-4 rounded-xl border border-slate-700/60">
+                            <div class="flex items-center gap-2 bg-card/60 p-2 rounded-xl border border-slate-700/30">
+                                <input type="radio" name="correctOpt" value="0" checked class="accent-oman-gold w-4 h-4 cursor-pointer">
+                                <input type="text" id="opt0" placeholder="الخيار الأول" class="w-full bg-input border rounded-lg p-2 text-xs focus:outline-none focus:border-oman-gold">
+                            </div>
+                            <div class="flex items-center gap-2 bg-card/60 p-2 rounded-xl border border-slate-700/30">
+                                <input type="radio" name="correctOpt" value="1" class="accent-oman-gold w-4 h-4 cursor-pointer">
+                                <input type="text" id="opt1" placeholder="الخيار الثاني" class="w-full bg-input border rounded-lg p-2 text-xs focus:outline-none focus:border-oman-gold">
+                            </div>
+                            <div class="flex items-center gap-2 bg-card/60 p-2 rounded-xl border border-slate-700/30">
+                                <input type="radio" name="correctOpt" value="2" class="accent-oman-gold w-4 h-4 cursor-pointer">
+                                <input type="text" id="opt2" placeholder="الخيار الثالث" class="w-full bg-input border rounded-lg p-2 text-xs focus:outline-none focus:border-oman-gold">
+                            </div>
+                            <div class="flex items-center gap-2 bg-card/60 p-2 rounded-xl border border-slate-700/30">
+                                <input type="radio" name="correctOpt" value="3" class="accent-oman-gold w-4 h-4 cursor-pointer">
+                                <input type="text" id="opt3" placeholder="الخيار الرابع" class="w-full bg-input border rounded-lg p-2 text-xs focus:outline-none focus:border-oman-gold">
+                            </div>
+                        </div>
+
+                        <div id="essayMultipartArea" class="hidden md:col-span-2 space-y-3 bg-input/20 p-4 rounded-xl border border-slate-700/60">
+                            <p class="text-xs font-bold text-oman-gold mb-1"><i class="fa-solid fa-layer-group"></i> تفريعات السؤال المقالي:</p>
+                            <div>
+                                <label class="block text-[11px] text-slate-400 mb-0.5">المطلوب أو الجزئية (أ):</label>
+                                <input type="text" id="partAInput" placeholder="أدخل الجزئية أ..." class="w-full bg-input border rounded-lg p-2 text-xs focus:outline-none focus:border-oman-gold">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] text-slate-400 mb-0.5">المطلوب أو الجزئية (ب):</label>
+                                <input type="text" id="partBInput" placeholder="أدخل الجزئية ب..." class="w-full bg-input border rounded-lg p-2 text-xs focus:outline-none focus:border-oman-gold">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pt-2">
+                        <button type="button" id="btnAddQuestionSubmit" onclick="addQuestion()" class="w-full bg-gradient-to-r from-oman-gold to-yellow-500 hover:from-yellow-500 hover:to-oman-gold text-oman-navy font-bold py-2.5 rounded-xl text-xs transition-all shadow-lg flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-circle-plus"></i> حفظ وإضافة السؤال إلى الكراسة السحابية
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-card border p-6 rounded-2xl shadow-xl">
+                <h3 class="text-sm font-bold mb-4 flex justify-between items-center border-b border-slate-800/60 pb-2">
+                    <span><i class="fa-solid fa-list-check text-oman-gold ml-1"></i> الأسئلة المرفوعة سحابياً</span>
+                    <span id="questionCountBadge" class="bg-oman-gold/10 text-oman-gold text-xs px-2 py-0.5 rounded-full border border-oman-gold/30">0</span>
+                </h3>
+                <div id="questionsList" class="space-y-4 max-h-[400px] overflow-y-auto pr-2"></div>
+            </div>
+
+            <div class="bg-card border p-6 rounded-2xl shadow-xl">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 border-b border-slate-800/60 pb-3 mb-4">
+                    <h3 class="text-sm font-bold text-oman-gold flex items-center gap-2">
+                        <i class="fa-solid fa-users-viewfinder"></i> صندوق رصد إجابات الطلاب والنزاهة
+                    </h3>
+                    <button type="button" onclick="exportSubmissionsToCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-4 py-2 rounded-xl transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-file-excel"></i> تصدير النتائج (CSV)
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-input text-slate-300 border-b border-slate-700">
+                                <th class="p-3">اسم الطالب</th>
+                                <th class="p-3">رقم الهاتف</th>
+                                <th class="p-3">رقم الجلوس</th>
+                                <th class="p-3">وقت التسليم</th>
+                                <th class="p-3 text-center">الدرجة التلقائية</th>
+                                <th class="p-3 text-center">حالة النزاهة</th>
