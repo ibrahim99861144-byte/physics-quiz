@@ -34,6 +34,10 @@
         .dark-card { background-color: #172a45; border-color: #1f3a60; }
         .light-mode { background-color: #f8fafc; color: #0b192f; }
         .light-card { background-color: #ffffff; border-color: #e2e8f0; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0b192f; }
+        ::-webkit-scrollbar-thumb { background: #172a45; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #d4af37; }
     </style>
 </head>
 <body class="dark-mode min-h-screen transition-colors duration-300 pb-12">
@@ -45,7 +49,7 @@
             </div>
             <div>
                 <h1 class="font-bold text-lg text-oman-gold" id="navTitle">نظام الاختبارات التفاعلي السحابي</h1>
-                <p class="text-xs text-slate-400">تطوير المنظومة التعليمية الرقمية | الأستاذ إبرام محمد</p>
+                <p class="text-xs text-slate-400">تطوير المنظومة التعليمية الرقمية | الأستاذ إبراهيم محمد</p>
             </div>
         </div>
         <div class="flex items-center gap-3">
@@ -63,124 +67,154 @@
 
     <div id="adminView" class="container mx-auto px-4 mt-8">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="dark-card border rounded-2xl p-6 transition-colors duration-300 shadow-xl h-fit">
-                <h3 class="font-bold text-lg mb-6 flex items-center gap-2 text-oman-gold border-b border-slate-700 pb-3">
-                    <i class="fa-solid fa-gear"></i> إعدادات الاختبار
-                </h3>
-                
-                <div class="mb-5">
-                    <label class="block text-xs font-semibold mb-2 text-slate-400">📸 صورة واجهة الطالب:</label>
-                    <div class="flex items-center gap-4 bg-oman-navy/50 p-3 rounded-xl border border-slate-700">
-                        <div class="w-16 h-16 rounded-full overflow-hidden bg-oman-navyLight flex items-center justify-center border-2 border-oman-gold" id="teacherImgPreview">
-                            <i class="fa-solid fa-user-tie text-3xl text-slate-500"></i>
-                        </div>
-                        <div class="flex-1">
-                            <input type="file" id="teacherImageInput" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'teacher')">
-                            <button onclick="document.getElementById('teacherImageInput').click()" class="text-xs bg-oman-gold text-oman-navy font-bold py-1.5 px-3 rounded-lg hover:bg-oman-goldHover transition">اختيار الملف</button>
-                            <button onclick="removeTeacherImage()" class="text-[10px] text-red-400 block mt-1 hover:underline"><i class="fa-solid fa-trash"></i> حذف الصورة</button>
+            <div class="space-y-6">
+                <div class="dark-card border rounded-2xl p-6 transition-colors duration-300 shadow-xl">
+                    <h3 class="font-bold text-lg mb-6 flex items-center gap-2 text-oman-gold border-b border-slate-700 pb-3">
+                        <i class="fa-solid fa-gear"></i> إعدادات الاختبار
+                    </h3>
+                    
+                    <div class="mb-5">
+                        <label class="block text-xs font-semibold mb-2 text-slate-400">📸 صورة واجهة الطالب:</label>
+                        <div class="flex items-center gap-4 bg-oman-navy/50 p-3 rounded-xl border border-slate-700">
+                            <div class="w-16 h-16 rounded-full overflow-hidden bg-oman-navyLight flex items-center justify-center border-2 border-oman-gold" id="teacherImgPreview">
+                                <i class="fa-solid fa-user-tie text-3xl text-slate-500"></i>
+                            </div>
+                            <div class="flex-1">
+                                <input type="file" id="teacherImageInput" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'teacher')">
+                                <button onclick="document.getElementById('teacherImageInput').click()" class="text-xs bg-oman-gold text-oman-navy font-bold py-1.5 px-3 rounded-lg hover:bg-oman-goldHover transition">اختيار الملف</button>
+                                <button onclick="removeTeacherImage()" class="text-[10px] text-red-400 block mt-1 hover:underline"><i class="fa-solid fa-trash"></i> حذف الصورة</button>
+                            </div>
                         </div>
                     </div>
+
+                    <div class="mb-4">
+                        <label class="block text-xs font-semibold mb-2 text-slate-400">عنوان الاختبار:</label>
+                        <input type="text" id="examTitleInput" class="w-full p-3 rounded-xl bg-oman-navy border border-slate-700 text-sm focus:outline-none focus:border-oman-gold transition" value="الاختبار التفاعلي التجريبي فيزياء دبلوم التعليم العام">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-xs font-semibold mb-2 text-slate-400">المادة الدراسية:</label>
+                        <input type="text" id="examSubjectInput" class="w-full p-3 rounded-xl bg-oman-navy border border-slate-700 text-sm focus:outline-none focus:border-oman-gold transition" value="الفيزياء / Physics">
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-xs font-semibold mb-2 text-slate-400">زمن الاختبار بالدقائق:</label>
+                        <input type="number" id="examDurationInput" class="w-full p-3 rounded-xl bg-oman-navy border border-slate-700 text-sm focus:outline-none focus:border-oman-gold transition" value="180">
+                    </div>
+                    <button onclick="saveExamSettings()" class="w-full py-3 rounded-xl bg-oman-gold text-oman-navy font-black text-sm hover:bg-oman-goldHover transition shadow-md">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> حفظ إعدادات البث سحابياً
+                    </button>
                 </div>
 
-                <div class="mb-4">
-                    <label class="block text-xs font-semibold mb-2 text-slate-400">عنوان الاختبار:</label>
-                    <input type="text" id="examTitleInput" class="w-full p-3 rounded-xl bg-oman-navy border border-slate-700 text-sm focus:outline-none focus:border-oman-gold transition" value="الاختبار التفاعلي التجريبي فيزياء دبلوم التعليم العام">
+                <div class="dark-card border rounded-2xl p-6 transition-colors duration-300 shadow-xl">
+                    <h3 class="font-bold text-lg mb-4 flex items-center justify-between text-oman-gold border-b border-slate-700 pb-3">
+                        <span class="flex items-center gap-2"><i class="fa-solid fa-users-viewfinder"></i> نتائج وتسليمات الطلاب</span>
+                        <button onclick="exportSubmissionsToCSV()" class="text-xs bg-emerald-600 text-white px-2 py-1 rounded hover:bg-emerald-700 transition">تصدير Excel</button>
+                    </h3>
+                    <div id="submissionsList" class="space-y-3 max-h-[400px] overflow-y-auto pr-1">
+                        <p class="text-xs text-slate-500 text-center py-4">في انتظار دخول وتسليم الطلاب...</p>
+                    </div>
                 </div>
-                <div class="mb-4">
-                    <label class="block text-xs font-semibold mb-2 text-slate-400">المادة الدراسية:</label>
-                    <input type="text" id="examSubjectInput" class="w-full p-3 rounded-xl bg-oman-navy border border-slate-700 text-sm focus:outline-none focus:border-oman-gold transition" value="الفيزياء / Physics">
-                </div>
-                <div class="mb-6">
-                    <label class="block text-xs font-semibold mb-2 text-slate-400">زمن الاختبار بالدقائق:</label>
-                    <input type="number" id="examDurationInput" class="w-full p-3 rounded-xl bg-oman-navy border border-slate-700 text-sm focus:outline-none focus:border-oman-gold transition" value="180">
-                </div>
-                <button onclick="saveExamSettings()" class="w-full py-3 rounded-xl bg-oman-gold text-oman-navy font-black text-sm hover:bg-oman-goldHover transition shadow-md">
-                    <i class="fa-solid fa-cloud-arrow-up"></i> حفظ إعدادات البث سحابياً
-                </button>
             </div>
 
-            <div class="lg:col-span-2 dark-card border rounded-2xl p-6 transition-colors duration-300 shadow-xl">
-                <h3 class="font-bold text-lg mb-6 flex items-center gap-2 text-oman-gold border-b border-slate-700 pb-3">
-                    <i class="fa-solid fa-plus"></i> بناء وإضافة سؤال جديد
-                </h3>
-                
-                <div class="mb-4">
-                    <label class="block text-xs font-semibold mb-2 text-slate-400">نص السؤال الرئيسي أو رأس المسألة:</label>
-                    <textarea id="qTextInput" rows="3" class="w-full p-3 rounded-xl bg-oman-navy border border-slate-700 text-sm focus:outline-none focus:border-oman-gold transition placeholder-slate-500" placeholder="اكتب منطوق السؤال هنا بدقة..."></textarea>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div>
-                        <label class="block text-xs font-semibold mb-2 text-slate-400">نوع السؤال / Question Type:</label>
-                        <select id="qTypeSelect" onchange="adjustQuestionTypeView()" class="w-full p-3 rounded-xl bg-oman-navy border border-slate-700 text-sm focus:outline-none focus:border-oman-gold transition">
-                            <option value="MCQ">اختيار من متعدد (MCQ)</option>
-                            <option value="ShortAnswer">إجابة مقالية قصيرة ونظام رسم هندسي</option>
-                        </select>
+            <div class="lg:col-span-2 space-y-6">
+                <div class="dark-card border rounded-2xl p-6 transition-colors duration-300 shadow-xl">
+                    <h3 class="font-bold text-lg mb-6 flex items-center gap-2 text-oman-gold border-b border-slate-700 pb-3">
+                        <i class="fa-solid fa-plus"></i> بناء وإضافة سؤال جديد
+                    </h3>
+                    
+                    <div class="mb-4">
+                        <label class="block text-xs font-semibold mb-2 text-slate-400">نص السؤال الرئيسي أو رأس المسألة:</label>
+                        <textarea id="qTextInput" rows="3" class="w-full p-3 rounded-xl bg-oman-navy border border-slate-700 text-sm focus:outline-none focus:border-oman-gold transition placeholder-slate-500" placeholder="اكتب منطوق السؤال هنا بدقة..."></textarea>
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold mb-2 text-slate-400">الدرجة الكلية للسؤال:</label>
-                        <input type="number" id="qScoreInput" class="w-full p-3 rounded-xl bg-oman-navy border border-slate-700 text-sm focus:outline-none focus:border-oman-gold transition" value="1">
-                    </div>
-                </div>
 
-                <div class="mb-6 p-4 bg-oman-navy/40 border border-dashed border-slate-700 rounded-xl">
-                    <label class="block text-xs font-semibold mb-2 text-oman-gold"><i class="fa-solid fa-image"></i> إرفاق صورة أو رسمة هندسية للمسألة (اختياري):</label>
-                    <div class="flex items-center gap-4">
-                        <input type="file" id="qImageInput" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'question')">
-                        <button onclick="document.getElementById('qImageInput').click()" class="text-xs bg-slate-700 text-white px-4 py-2 rounded-lg hover:bg-slate-600 transition">اختيار الملف</button>
-                        <span id="qImageName" class="text-xs text-slate-400">لم يتم اختيار ملف</span>
-                    </div>
-                </div>
-
-                <div id="mcqOptionsContainer" class="space-y-3 mb-6">
-                    <label class="block text-xs font-semibold text-slate-400 mb-1">الخيارات الأربعة (حدد الدائرة بجانب الخيار الصحيح برمجياً):</label>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="flex items-center gap-2 bg-oman-navy/50 p-2 rounded-xl border border-slate-700">
-                            <input type="radio" name="correctOpt" value="0" checked class="w-4 h-4 text-oman-gold accent-oman-gold">
-                            <input type="text" id="opt0" placeholder="الخيار الأول (أ)" class="w-full bg-transparent p-2 text-sm focus:outline-none">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-xs font-semibold mb-2 text-slate-400">نوع السؤال / Question Type:</label>
+                            <select id="qTypeSelect" onchange="adjustQuestionTypeView()" class="w-full p-3 rounded-xl bg-oman-navy border border-slate-700 text-sm focus:outline-none focus:border-oman-gold transition">
+                                <option value="MCQ">اختيار من متعدد (MCQ)</option>
+                                <option value="ShortAnswer">إجابة مقالية قصيرة ونظام رسم هندسي</option>
+                            </select>
                         </div>
-                        <div class="flex items-center gap-2 bg-oman-navy/50 p-2 rounded-xl border border-slate-700">
-                            <input type="radio" name="correctOpt" value="1" class="w-4 h-4 text-oman-gold accent-oman-gold">
-                            <input type="text" id="opt1" placeholder="الخيار الثاني (ب)" class="w-full bg-transparent p-2 text-sm focus:outline-none">
-                        </div>
-                        <div class="flex items-center gap-2 bg-oman-navy/50 p-2 rounded-xl border border-slate-700">
-                            <input type="radio" name="correctOpt" value="2" class="w-4 h-4 text-oman-gold accent-oman-gold">
-                            <input type="text" id="opt2" placeholder="الخيار الثالث (ج)" class="w-full bg-transparent p-2 text-sm focus:outline-none">
-                        </div>
-                        <div class="flex items-center gap-2 bg-oman-navy/50 p-2 rounded-xl border border-slate-700">
-                            <input type="radio" name="correctOpt" value="3" class="w-4 h-4 text-oman-gold accent-oman-gold">
-                            <input type="text" id="opt3" placeholder="الخيار الرابع (د)" class="w-full bg-transparent p-2 text-sm focus:outline-none">
+                        <div>
+                            <label class="block text-xs font-semibold mb-2 text-slate-400">الدرجة الكلية للسؤال:</label>
+                            <input type="number" id="qScoreInput" class="w-full p-3 rounded-xl bg-oman-navy border border-slate-700 text-sm focus:outline-none focus:border-oman-gold transition" value="1">
                         </div>
                     </div>
+
+                    <div class="mb-6 p-4 bg-oman-navy/40 border border-dashed border-slate-700 rounded-xl">
+                        <label class="block text-xs font-semibold mb-2 text-oman-gold"><i class="fa-solid fa-image"></i> إرفاق صورة أو رسمة هندسية للمسألة (اختياري):</label>
+                        <div class="flex items-center gap-4">
+                            <input type="file" id="qImageInput" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'question')">
+                            <button onclick="document.getElementById('qImageInput').click()" class="text-xs bg-slate-700 text-white px-4 py-2 rounded-lg hover:bg-slate-600 transition">اختيار الملف</button>
+                            <span id="qImageName" class="text-xs text-slate-400">لم يتم اختيار ملف</span>
+                        </div>
+                    </div>
+
+                    <div id="mcqOptionsContainer" class="space-y-3 mb-6">
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">الخيارات الأربعة (حدد الدائرة بجانب الخيار الصحيح برمجياً):</label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="flex items-center gap-2 bg-oman-navy/50 p-2 rounded-xl border border-slate-700">
+                                <input type="radio" name="correctOpt" value="0" checked class="w-4 h-4 text-oman-gold accent-oman-gold">
+                                <input type="text" id="opt0" placeholder="الخيار الأول (أ)" class="w-full bg-transparent p-2 text-sm focus:outline-none">
+                            </div>
+                            <div class="flex items-center gap-2 bg-oman-navy/50 p-2 rounded-xl border border-slate-700">
+                                <input type="radio" name="correctOpt" value="1" class="w-4 h-4 text-oman-gold accent-oman-gold">
+                                <input type="text" id="opt1" placeholder="الخيار الثاني (ب)" class="w-full bg-transparent p-2 text-sm focus:outline-none">
+                            </div>
+                            <div class="flex items-center gap-2 bg-oman-navy/50 p-2 rounded-xl border border-slate-700">
+                                <input type="radio" name="correctOpt" value="2" class="w-4 h-4 text-oman-gold accent-oman-gold">
+                                <input type="text" id="opt2" placeholder="الخيار الثالث (ج)" class="w-full bg-transparent p-2 text-sm focus:outline-none">
+                            </div>
+                            <div class="flex items-center gap-2 bg-oman-navy/50 p-2 rounded-xl border border-slate-700">
+                                <input type="radio" name="correctOpt" value="3" class="w-4 h-4 text-oman-gold accent-oman-gold">
+                                <input type="text" id="opt3" placeholder="الخيار الرابع (د)" class="w-full bg-transparent p-2 text-sm focus:outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="saveQuestionBtn" onclick="uploadQuestionToCloud()" class="w-full py-4 rounded-xl bg-oman-gold text-oman-navy font-black text-sm hover:bg-oman-goldHover transition shadow-lg flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i> حفظ وإضافة السؤال إلى الكراسة السحابية
+                    </button>
                 </div>
 
-                <button id="saveQuestionBtn" onclick="uploadQuestionToCloud()" class="w-full py-4 rounded-xl bg-oman-gold text-oman-navy font-black text-sm hover:bg-oman-goldHover transition shadow-lg flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-paper-plane"></i> حفظ وإضافة السؤال إلى الكراسة السحابية
-                </button>
-            </div>
-        </div>
-
-        <div class="mt-12 dark-card border rounded-2xl p-6 transition-colors duration-300 shadow-xl">
-            <h3 class="font-bold text-lg mb-6 flex items-center justify-between text-oman-gold border-b border-slate-700 pb-3">
-                <span class="flex items-center gap-2"><i class="fa-solid fa-list-check"></i> الأسئلة المرفوعة سحابياً</span>
-                <span id="qCountBadge" class="bg-oman-navyLight border border-oman-gold text-oman-gold text-xs px-3 py-1 rounded-full font-bold shadow-sm">0</span>
-            </h3>
-            <div id="cloudQuestionsList" class="space-y-4">
-                <p class="text-sm text-slate-500 text-center py-6">جاري جلب الأسئلة والمزامنة مع قاعدة البيانات السحابية...</p>
+                <div class="dark-card border rounded-2xl p-6 transition-colors duration-300 shadow-xl">
+                    <h3 class="font-bold text-lg mb-6 flex items-center justify-between text-oman-gold border-b border-slate-700 pb-3">
+                        <span class="flex items-center gap-2"><i class="fa-solid fa-list-check"></i> الأسئلة المرفوعة سحابياً</span>
+                        <span id="qCountBadge" class="bg-oman-navyLight border border-oman-gold text-oman-gold text-xs px-3 py-1 rounded-full font-bold shadow-sm">0</span>
+                    </h3>
+                    <div id="cloudQuestionsList" class="space-y-4 shadow-inner">
+                        <p class="text-sm text-slate-500 text-center py-6">جاري المزامنة وجلب الأسئلة سحابياً...</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <div id="studentView" class="container mx-auto px-4 mt-8 hidden">
-        <div class="max-w-3xl mx-auto dark-card border rounded-2xl p-6 shadow-xl">
-            <div class="text-center mb-6">
-                <i class="fa-solid fa-graduation-cap text-4xl text-oman-gold mb-2 block"></i>
-                <h2 class="text-xl font-bold" id="stExamTitle">الاختبار التفاعلي للفيزياء</h2>
-                <p class="text-xs text-slate-400 mt-1" id="stExamSubject">الفيزياء / Physics</p>
-            </div>
-            
-            <div id="studentQuestionsContainer" class="space-y-6">
+        <div class="max-w-4xl mx-auto dark-card border rounded-2xl p-6 shadow-xl relative overflow-hidden">
+            <div class="flex items-center gap-4 border-b border-slate-700 pb-4 mb-6" id="stHeader">
+                <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-oman-gold bg-oman-navy flex items-center justify-center shadow-md" id="stTeacherImg">
+                    <i class="fa-solid fa-user-tie text-3xl text-slate-400"></i>
                 </div>
+                <div>
+                    <h2 class="text-xl font-bold text-oman-gold" id="stExamTitle">الاختبار التفاعلي التجريبي فيزياء دبلوم التعليم العام</h2>
+                    <p class="text-xs text-slate-400" id="stExamSubject">الفيزياء / Physics</p>
+                </div>
+            </div>
+
+            <div id="studentAuthBlock" class="bg-oman-navy/60 p-6 rounded-2xl border border-slate-700 max-w-md mx-auto text-center my-8">
+                <i class="fa-solid fa-id-card-clip text-4xl text-oman-gold mb-3 block"></i>
+                <h4 class="font-bold text-sm mb-4">يرجى تسجيل بياناتك الرسمية لبدء البث التفاعلي:</h4>
+                <input type="text" id="stNameInput" placeholder="اسم الطالب الثلاثي" class="w-full p-3 rounded-xl bg-oman-navy border border-slate-700 text-sm mb-3 text-center focus:outline-none focus:border-oman-gold">
+                <input type="text" id="stSeatInput" placeholder="رقم الجلوس / الرقم المدني" class="w-full p-3 rounded-xl bg-oman-navy border border-slate-700 text-sm mb-4 text-center focus:outline-none focus:border-oman-gold">
+                <button onclick="startExamAsStudent()" class="w-full py-3 bg-oman-gold text-oman-navy font-bold rounded-xl hover:bg-oman-goldHover transition shadow-md">دخول وبدء الاختبار</button>
+            </div>
+
+            <div id="studentQuizBlock" class="hidden space-y-6">
+                <div id="studentQuestionsContainer" class="space-y-6"></div>
+                <button onclick="submitStudentExam()" class="w-full py-4 bg-emerald-600 text-white font-black rounded-xl hover:bg-emerald-700 transition shadow-lg text-sm mt-8">
+                    <i class="fa-solid fa-circle-check"></i> تسليم وإرسال الإجابات والرسومات للمعلم فوراً
+                </button>
+            </div>
         </div>
     </div>
 
@@ -205,14 +239,14 @@
 
         let uploadedTeacherImgBase64 = "";
         let uploadedQuestionImgBase64 = "";
+        let globalQuestions = [];
+        let submissions = [];
+        let activeStudent = null;
 
         function handleImageUpload(input, type) {
             const file = input.files[0];
             if (!file) return;
-
-            if (type === 'question') {
-                document.getElementById('qImageName').innerText = "جاري معالجة الصورة وضغطها...";
-            }
+            if (type === 'question') document.getElementById('qImageName').innerText = "جاري ضغط الصورة...";
 
             const reader = new FileReader();
             reader.onload = function (e) {
@@ -221,25 +255,18 @@
                     const canvas = document.createElement('canvas');
                     let width = img.width;
                     let height = img.height;
-
-                    const MAX_WIDTH = 500;
-                    if (width > MAX_WIDTH) {
-                        height *= MAX_WIDTH / width;
-                        width = MAX_WIDTH;
-                    }
-
-                    canvas.width = width;
-                    canvas.height = height;
+                    const MAX_WIDTH = 450;
+                    if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                    canvas.width = width; canvas.height = height;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
-
-                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6);
+                    const compressed = canvas.toDataURL('image/jpeg', 0.5);
 
                     if (type === 'teacher') {
-                        uploadedTeacherImgBase64 = compressedBase64;
-                        document.getElementById('teacherImgPreview').innerHTML = `<img src="${compressedBase64}" class="w-full h-full object-cover">`;
-                    } else if (type === 'question') {
-                        uploadedQuestionImgBase64 = compressedBase64;
+                        uploadedTeacherImgBase64 = compressed;
+                        document.getElementById('teacherImgPreview').innerHTML = `<img src="${compressed}" class="w-full h-full object-cover">`;
+                    } else {
+                        uploadedQuestionImgBase64 = compressed;
                         document.getElementById('qImageName').innerText = file.name + " (تم الضغط)";
                     }
                 };
@@ -260,155 +287,225 @@
             const score = document.getElementById('qScoreInput').value;
             const saveBtn = document.getElementById('saveQuestionBtn');
 
-            if (!text) {
-                alert("برجاء كتابة نص المسألة أولاً!");
-                return;
-            }
-
+            if (!text) return alert("برجاء كتابة نص السؤال أولاً!");
             saveBtn.disabled = true;
-            saveBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> جاري الحفظ سحابياً...`;
+            saveBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> جاري الحفظ والتشفير...`;
 
-            let questionData = {
-                id: Date.now().toString(),
-                text: text,
-                type: type,
-                score: score,
+            let qData = {
+                id: Date.now().toString(), text: text, type: type, score: score,
                 image: uploadedQuestionImgBase64 || null
             };
 
             if (type === 'MCQ') {
-                questionData.options = [
+                qData.options = [
                     document.getElementById('opt0').value.trim() || "خيار أ",
                     document.getElementById('opt1').value.trim() || "خيار ب",
                     document.getElementById('opt2').value.trim() || "خيار ج",
                     document.getElementById('opt3').value.trim() || "خيار د"
                 ];
-                questionData.correctIndex = document.querySelector('input[name="correctOpt"]:checked').value;
+                qData.correctIndex = document.querySelector('input[name="correctOpt"]:checked').value;
             }
 
-            database.ref('exam/questions/' + questionData.id).set(questionData, (error) => {
+            database.ref('exam/questions/' + qData.id).set(qData, (err) => {
                 saveBtn.disabled = false;
                 saveBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> حفظ وإضافة السؤال إلى الكراسة السحابية`;
-
-                if (error) {
-                    alert("فشل الرفع: " + error.message);
-                } else {
+                if (err) alert("فشل الرفع: " + err.message);
+                else {
                     document.getElementById('qTextInput').value = "";
                     uploadedQuestionImgBase64 = "";
                     document.getElementById('qImageName').innerText = "لم يتم اختيار ملف";
-                    document.getElementById('qImageInput').value = "";
-                    alert("تم حفظ وإرسال السؤال إلى خوادم السحابة التفاعلية بنجاح وبث مباشر!");
+                    alert("تم الحفظ والمزامنة السحابية بنجاح تفاعلي!");
                 }
             });
         }
 
+        // مزامنة الأسئلة الحية للوحة التحكم وشاشة الطالب
         database.ref('exam/questions').on('value', (snapshot) => {
-            const listContainer = document.getElementById('cloudQuestionsList');
-            const countBadge = document.getElementById('qCountBadge');
-            const studentContainer = document.getElementById('studentQuestionsContainer');
-            
-            listContainer.innerHTML = "";
-            studentContainer.innerHTML = "";
-            
+            const list = document.getElementById('cloudQuestionsList');
+            const badge = document.getElementById('qCountBadge');
+            list.innerHTML = ""; globalQuestions = [];
+
             if (!snapshot.exists()) {
-                listContainer.innerHTML = `<p class="text-sm text-slate-500 text-center py-6">لا توجد أسئلة مرفوعة حالياً.</p>`;
-                studentContainer.innerHTML = `<p class="text-sm text-slate-500 text-center py-6">لم يقم المعلم بنشر أي أسئلة للاختبار بعد.</p>`;
-                countBadge.innerText = "0";
-                return;
+                list.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">لا توجد أسئلة سحابية مرفوعة حالياً.</p>`;
+                badge.innerText = "0"; return;
             }
 
-            let index = 1;
-            snapshot.forEach((childSnapshot) => {
-                const q = childSnapshot.val();
-                
-                // إضافة للوحة التحكم
-                let itemHtml = `
-                    <div class="p-4 rounded-xl bg-oman-navy/60 border border-slate-700/60 flex justify-between items-start gap-4">
-                        <div class="flex-1">
-                            <span class="text-xs font-bold text-oman-gold bg-oman-navyLight px-2 py-0.5 rounded-md border border-oman-gold/30">سؤال ${index}</span>
-                            <p class="text-sm font-semibold mt-2">${q.text}</p>
-                            ${q.image ? `<img src="${q.image}" class="mt-2 rounded-lg max-h-32 border border-slate-700">` : ''}
-                        </div>
-                        <button onclick="deleteQuestion('${q.id}')" class="text-xs text-red-400 hover:text-red-500 bg-red-500/10 p-2 rounded-lg transition"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                `;
-                listContainer.innerHTML += itemHtml;
-                
-                // إضافة لشاشة الطالب
-                let studentItemHtml = `
-                    <div class="p-4 rounded-xl bg-oman-navy/40 border border-slate-700">
-                        <span class="text-xs font-bold text-oman-gold">سؤال ${index} (${q.score} درجات)</span>
-                        <p class="text-sm font-semibold mt-2">${q.text}</p>
-                        ${q.image ? `<img src="${q.image}" class="mt-3 rounded-lg max-h-64 mx-auto border border-slate-700">` : ''}
-                    </div>
-                `;
-                studentContainer.innerHTML += studentItemHtml;
-                
-                index++;
+            let idx = 1;
+            snapshot.forEach((child) => {
+                const q = child.val(); globalQuestions.push(q);
+                list.innerHTML += `
+                    <div class="p-3 rounded-xl bg-oman-navy/50 border border-slate-700/60 flex justify-between items-center text-xs">
+                        <div><b>س${idx}:</b> ${q.text.substring(0, 40)}... (${q.type})</div>
+                        <button onclick="deleteQuestion('${q.id}')" class="text-red-400 hover:text-red-500 p-1 bg-red-500/10 rounded"><i class="fa-solid fa-trash"></i></button>
+                    </div>`;
+                idx++;
             });
-            countBadge.innerText = (index - 1).toString();
+            badge.innerText = (idx - 1).toString();
+            renderStudentQuestions();
         });
 
         function deleteQuestion(id) {
-            if(confirm("هل أنت متأكد من حذف هذا السؤال؟")) {
-                database.ref('exam/questions/' + id).remove();
-            }
+            if (confirm("هل تريد حذف هذا السؤال سحابياً؟")) database.ref('exam/questions/' + id).remove();
         }
 
         function saveExamSettings() {
-            const title = document.getElementById('examTitleInput').value;
-            const subject = document.getElementById('examSubjectInput').value;
-            const duration = document.getElementById('examDurationInput').value;
-
             database.ref('exam/settings').set({
-                title: title,
-                subject: subject,
-                duration: duration,
+                title: document.getElementById('examTitleInput').value,
+                subject: document.getElementById('examSubjectInput').value,
+                duration: document.getElementById('examDurationInput').value,
                 teacherImage: uploadedTeacherImgBase64 || null
-            }, (error) => {
-                if(error) alert("فشل حفظ الإعدادات: " + error.message);
-                else {
-                    document.getElementById('stExamTitle').innerText = title;
-                    document.getElementById('stExamSubject').innerText = subject;
-                    alert("تم بث وحفظ إعدادات المنصة السحابية بنجاح!");
+            }, (err) => {
+                if(!err) alert("تم بث تحديث الإعدادات والهوية السحابية!");
+            });
+        }
+
+        // الاستماع لإعدادات الاختبار
+        database.ref('exam/settings').on('value', (snapshot) => {
+            if (snapshot.exists()) {
+                const s = snapshot.val();
+                document.getElementById('stExamTitle').innerText = s.title;
+                document.getElementById('stExamSubject').innerText = s.subject;
+                if (s.teacherImage) {
+                    document.getElementById('stTeacherImg').innerHTML = `<img src="${s.teacherImage}" class="w-full h-full object-cover">`;
+                }
+            }
+        });
+
+        function renderStudentQuestions() {
+            const container = document.getElementById('studentQuestionsContainer');
+            container.innerHTML = "";
+            if (globalQuestions.length === 0) return;
+
+            globalQuestions.forEach((q, idx) => {
+                let html = `<div class="p-4 rounded-xl bg-oman-navy/40 border border-slate-700 space-y-3 text-sm">
+                    <span class="text-xs font-bold text-oman-gold">سؤال ${idx+1} (${q.score} درجات)</span>
+                    <p class="font-semibold">${q.text}</p>
+                    ${q.image ? `<img src="${q.image}" class="max-h-48 mx-auto rounded-lg border border-slate-700 mb-2">` : ''}`;
+
+                if (q.type === 'MCQ') {
+                    html += `<div class="grid grid-cols-1 md:grid-cols-2 gap-2 pt-2">`;
+                    q.options.forEach((opt, oIdx) => {
+                        html += `
+                            <label class="flex items-center gap-3 p-2 bg-oman-navyLight/40 rounded-lg border border-slate-700/60 cursor-pointer hover:border-oman-gold transition">
+                                <input type="radio" name="stOpt_${q.id}" value="${oIdx}" class="accent-oman-gold"> <span>${opt}</span>
+                            </label>`;
+                    });
+                    html += `</div>`;
+                } else {
+                    html += `
+                        <div class="space-y-2 pt-2">
+                            <input type="text" id="stAns_${q.id}_a" placeholder="صيغة الإجابة الرياضية أو اللفظية النهائية" class="w-full p-2.5 rounded-lg bg-oman-navy border border-slate-700 text-xs">
+                            <textarea id="stAns_${q.id}_b" rows="2" placeholder="خطوات التعويض والحل الفيزيائي المكتوب" class="w-full p-2.5 rounded-lg bg-oman-navy border border-slate-700 text-xs"></textarea>
+                            <div class="border border-slate-700 rounded-xl p-3 bg-oman-navyLight/30">
+                                <label class="block text-xs font-bold text-slate-400 mb-2"><i class="fa-solid fa-pen-nib"></i> سبورة الرسم التخطيطي والبياني المباشر:</label>
+                                <canvas id="wb_${q.id}" width="400" height="200" class="bg-white rounded-lg w-full max-w-full cursor-crosshair border border-slate-300 shadow-inner"></canvas>
+                                <button onclick="clearWhiteboard('${q.id}')" class="text-[10px] mt-1 bg-slate-700 text-white px-2 py-0.5 rounded hover:bg-slate-600">مسح اللوحة</button>
+                            </div>
+                        </div>`;
+                }
+                html += `</div>`;
+                container.innerHTML += html;
+                setTimeout(() => { if(q.type !== 'MCQ') initWhiteboard(q.id); }, 100);
+            });
+        }
+
+        // محرك تشغيل السبورة التفاعلية للطلاب
+        let boards = {};
+        function initWhiteboard(id) {
+            const canvas = document.getElementById('wb_' + id);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let drawing = false;
+            ctx.strokeStyle = '#0b192f'; ctx.lineWidth = 2;
+
+            function getPos(e) {
+                const rect = canvas.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                return { x: clientX - rect.left, y: clientY - rect.top };
+            }
+            function start(e) { drawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); e.preventDefault(); }
+            function move(e) { if (!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); e.preventDefault(); }
+            function stop() { drawing = false; }
+
+            canvas.addEventListener('mousedown', start); canvas.addEventListener('mousemove', move); window.addEventListener('mouseup', stop);
+            canvas.addEventListener('touchstart', start, {passive:false}); canvas.addEventListener('touchmove', move, {passive:false}); window.addEventListener('touchend', stop);
+            boards[id] = { canvas, ctx };
+        }
+
+        function clearWhiteboard(id) {
+            if(boards[id]) boards[id].ctx.clearRect(0, 0, boards[id].canvas.width, boards[id].canvas.height);
+        }
+
+        function startExamAsStudent() {
+            const name = document.getElementById('stNameInput').value.trim();
+            const seat = document.getElementById('stSeatInput').value.trim();
+            if (!name || !seat) return alert("برجاء إدخال بياناتك كاملة أولاً!");
+            activeStudent = { name, seat };
+            document.getElementById('studentAuthBlock').classList.add('hidden');
+            document.getElementById('studentQuizBlock').classList.remove('hidden');
+        }
+
+        function submitStudentExam() {
+            if(!activeStudent) return;
+            let answers = {};
+
+            globalQuestions.forEach(q => {
+                if (q.type === 'MCQ') {
+                    const sel = document.querySelector(`input[name="stOpt_${q.id}"]:checked`);
+                    answers[q.id] = sel ? parseInt(sel.value) : null;
+                } else {
+                    let wbData = null;
+                    if(boards[q.id]) {
+                        const blank = document.createElement('canvas');
+                        blank.width = boards[q.id].canvas.width; blank.height = boards[q.id].canvas.height;
+                        if(boards[q.id].canvas.toDataURL() !== blank.toDataURL()) wbData = boards[q.id].canvas.toDataURL();
+                    }
+                    answers[q.id] = {
+                        a: document.getElementById(`stAns_${q.id}_a`).value.trim(),
+                        b: document.getElementById(`stAns_${q.id}_b`).value.trim(),
+                        whiteboard: wbData
+                    };
+                }
+            });
+
+            const submissionId = Date.now().toString();
+            database.ref('exam/submissions/' + submissionId).set({
+                id: submissionId, studentName: activeStudent.name, seatNumber: activeStudent.seat,
+                time: new Date().toLocaleTimeString('ar-OM'), answers: answers
+            }, (err) => {
+                if(!err) {
+                    alert("ممتاز يا بطل! تم إرسال وبث إجاباتك ورسوماتك الهندسية لكراسة الأستاذ بنجاح ثوري!");
+                    location.reload();
                 }
             });
         }
 
-        function adjustQuestionTypeView() {
-            const type = document.getElementById('qTypeSelect').value;
-            const container = document.getElementById('mcqOptionsContainer');
-            if (type === 'MCQ') container.style.display = 'block';
-            else container.style.display = 'none';
-        }
+        // الاستماع لتسليمات وإجابات الطلاب وعرضها للمعلم
+        database.ref('exam/submissions').on('value', (snapshot) => {
+            const container = document.getElementById('submissionsList');
+            container.innerHTML = ""; submissions = [];
 
-        function toggleTheme() {
-            const body = document.body;
-            const nav = document.getElementById('mainNav');
-            const cards = document.querySelectorAll('.dark-card, .light-card');
-            
-            if (body.classList.contains('dark-mode')) {
-                body.classList.replace('dark-mode', 'light-mode');
-                nav.classList.replace('dark-card', 'light-card');
-                cards.forEach(c => c.classList.replace('dark-card', 'light-card'));
-            } else {
-                body.classList.replace('light-mode', 'dark-mode');
-                nav.classList.replace('light-card', 'dark-card');
-                cards.forEach(c => c.classList.replace('light-card', 'dark-card'));
+            if (!snapshot.exists()) {
+                container.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">في انتظار تسليم الطلاب...</p>`;
+                return;
             }
-        }
 
-        function switchView(view) {
-            const admin = document.getElementById('adminView');
-            const student = document.getElementById('studentView');
-            if (view === 'admin') {
-                admin.classList.remove('hidden');
-                student.classList.add('hidden');
-            } else {
-                admin.classList.add('hidden');
-                student.classList.remove('hidden');
-            }
-        }
-    </script>
-</body>
-</html>
+            snapshot.forEach(child => {
+                const sub = child.val(); submissions.push(sub);
+                container.innerHTML += `
+                    <div class="p-3 bg-oman-navyLight/60 border border-slate-700/50 rounded-xl flex justify-between items-center text-xs">
+                        <div>
+                            <p class="font-bold text-oman-gold">${sub.studentName}</p>
+                            <p class="text-[10px] text-slate-400">رقم: ${sub.seatNumber} | الوقت: ${sub.time}</p>
+                        </div>
+                        <button onclick="viewSubmissionDetails('${sub.id}')" class="px-2 py-1 bg-oman-gold text-oman-navy font-bold rounded hover:bg-oman-goldHover transition">كراسة الإجابة</button>
+                    </div>`;
+            });
+        });
+
+        function viewSubmissionDetails(id) {
+            const sub = submissions.find(s => s.id === id);
+            if (!sub) return;
+            const win = window.open("", "_blank", "width=600,height=600");
+            let html = `<html lang="ar" dir="rtl">
