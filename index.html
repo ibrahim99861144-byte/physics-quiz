@@ -508,4 +508,28 @@
             const sub = submissions.find(s => s.id === id);
             if (!sub) return;
             const win = window.open("", "_blank", "width=600,height=600");
-            let html = `<html lang="ar" dir="rtl">
+            let html = `<html lang="ar" dir="rtl"><head><title>كراسة الطالب: ${sub.studentName}</title><style>body{font-family:sans-serif;padding:20px;background:#f8fafc;direction:rtl; text-align:right;} .card{background:white;padding:15px;margin-bottom:15px;border-radius:10px;border:1px solid #e2e8f0;}</style></head><body>`;
+            html += `<h2>إجابات الطالب ورسوماته: ${sub.studentName}</h2><p>رقم الجلوس: ${sub.seatNumber} | وقت التسليم: ${sub.time}</p><hr><br>`;
+
+            globalQuestions.forEach((q, idx) => {
+                const ans = sub.answers ? sub.answers[q.id] : null;
+                html += `<div class="card"><b>سؤال ${idx+1}: ${q.text}</b><br>`;
+                if (q.type === 'MCQ') {
+                    html += `<p>الإجابة المستلمة: ${ans !== null && q.options ? q.options[ans] : 'لم يحل'}</p>`;
+                } else if(ans) {
+                    if(ans.a) htmlContent += `<div class="text-xs mt-1 text-slate-300"><b>أ)</b> ${ans.a}</div>`;
+                    if(ans.b) htmlContent += `<div class="text-xs mt-1 text-slate-300"><b>ب)</b> ${ans.b}</div>`;
+                    if(ans.whiteboard) htmlContent += `<div class="mt-2"><b>الرسمة من السبورة:</b><br><img src="${ans.whiteboard}" style="background:white;border:1px solid #ccc;max-height:180px;"></div>`;
+                }
+                html += `</div>`;
+            });
+            win.document.write(html + "</body></html>"); win.document.close();
+        }
+
+        function exportSubmissionsToCSV() {
+            if (submissions.length === 0) return alert("لا توجد بيانات لتصديرها!");
+            let csv = "data:text/csv;charset=utf-8,\uFEFFاسم الطالب,رقم الجلوس,وقت التسليم\n";
+            submissions.forEach(sub => { csv += `"${sub.studentName}","${sub.seatNumber || ''}","${sub.time}"\n`; });
+            const encoded = encodeURI(csv); const link = document.createElement("a");
+            link.setAttribute("href", encoded); link.setAttribute("download", "نتائج_الطلاب.csv");
+            document.body.appendChild(link);
