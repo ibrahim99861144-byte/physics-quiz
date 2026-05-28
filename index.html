@@ -41,7 +41,7 @@
     <nav class="dark-card border-b px-6 py-4 flex flex-wrap justify-between items-center gap-4 sticky top-0 z-50 transition-colors duration-300 shadow-md" id="mainNav">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-oman-gold flex items-center justify-center shadow-lg">
-                <i class="fa-solid fa-atom text-oman-navy text-xl animate-spin-slow"></i>
+                <i class="fa-solid fa-atom text-oman-navy text-xl"></i>
             </div>
             <div>
                 <h1 class="font-bold text-lg text-oman-gold" id="navTitle">نظام الاختبارات التفاعلي السحابي</h1>
@@ -172,10 +172,15 @@
     </div>
 
     <div id="studentView" class="container mx-auto px-4 mt-8 hidden">
-        <div class="max-w-3xl mx-auto dark-card border rounded-2xl p-6 shadow-xl text-center">
-            <i class="fa-solid fa-hourglass-start text-4xl text-oman-gold mb-4 block"></i>
-            <h2 class="text-xl font-bold mb-2">شاشة الطالب التفاعلية</h2>
-            <p class="text-sm text-slate-400">جاهزة للبث الخارجي للطلاب عبر الرابط الذكي بنجاح.</p>
+        <div class="max-w-3xl mx-auto dark-card border rounded-2xl p-6 shadow-xl">
+            <div class="text-center mb-6">
+                <i class="fa-solid fa-graduation-cap text-4xl text-oman-gold mb-2 block"></i>
+                <h2 class="text-xl font-bold" id="stExamTitle">الاختبار التفاعلي للفيزياء</h2>
+                <p class="text-xs text-slate-400 mt-1" id="stExamSubject">الفيزياء / Physics</p>
+            </div>
+            
+            <div id="studentQuestionsContainer" class="space-y-6">
+                </div>
         </div>
     </div>
 
@@ -193,18 +198,14 @@
             appId: "1:10568294473:web:7a8b9c1d2e3f4a5b6c7d8e"
         };
 
-        // تشغيل نظام Firebase سحابياً
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
         const database = firebase.database();
 
-        // متغيرات حفظ الصور المؤقتة المضغوطة
         let uploadedTeacherImgBase64 = "";
         let uploadedQuestionImgBase64 = "";
-        let questionsArray = [];
 
-        // دالة ضغط الصور المتقدمة تلقائياً لمنع أي تعليق أو ثقل في قاعدة البيانات
         function handleImageUpload(input, type) {
             const file = input.files[0];
             if (!file) return;
@@ -221,7 +222,6 @@
                     let width = img.width;
                     let height = img.height;
 
-                    // تحديد الحد الأقصى للأبعاد لتقليص الحجم البرمجي
                     const MAX_WIDTH = 500;
                     if (width > MAX_WIDTH) {
                         height *= MAX_WIDTH / width;
@@ -233,7 +233,6 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    // ضغط الصورة بجودة 60% فقط لتقليل الكود السحابي النصي وحل المشكلة فوراً
                     const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6);
 
                     if (type === 'teacher') {
@@ -241,7 +240,7 @@
                         document.getElementById('teacherImgPreview').innerHTML = `<img src="${compressedBase64}" class="w-full h-full object-cover">`;
                     } else if (type === 'question') {
                         uploadedQuestionImgBase64 = compressedBase64;
-                        document.getElementById('qImageName').innerText = file.name + " (تم الضغط بنجاح)";
+                        document.getElementById('qImageName').innerText = file.name + " (تم الضغط)";
                     }
                 };
                 img.src = e.target.result;
@@ -255,7 +254,6 @@
             document.getElementById('teacherImageInput').value = "";
         }
 
-        // دالة رفع السؤال السحابية الفورية المحسنة
         function uploadQuestionToCloud() {
             const text = document.getElementById('qTextInput').value.trim();
             const type = document.getElementById('qTypeSelect').value;
@@ -263,13 +261,12 @@
             const saveBtn = document.getElementById('saveQuestionBtn');
 
             if (!text) {
-                alert("برجاء كتابة نص المسألة أو السؤال أولاً!");
+                alert("برجاء كتابة نص المسألة أولاً!");
                 return;
             }
 
-            // إظهار حالة المعالجة
             saveBtn.disabled = true;
-            saveBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> جاري إرسال السؤال للسحابة الآمنة...`;
+            saveBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> جاري الحفظ سحابياً...`;
 
             let questionData = {
                 id: Date.now().toString(),
@@ -289,15 +286,13 @@
                 questionData.correctIndex = document.querySelector('input[name="correctOpt"]:checked').value;
             }
 
-            // إرسال فوري إلى السيرفر السحابي المفتوح الجديد
             database.ref('exam/questions/' + questionData.id).set(questionData, (error) => {
                 saveBtn.disabled = false;
                 saveBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> حفظ وإضافة السؤال إلى الكراسة السحابية`;
 
                 if (error) {
-                    alert("عذراً، فشل الرفع السحابي: " + error.message);
+                    alert("فشل الرفع: " + error.message);
                 } else {
-                    // مسح الحقول والتهيئة للسؤال القادم بنجاح وبسرعة فائقة
                     document.getElementById('qTextInput').value = "";
                     uploadedQuestionImgBase64 = "";
                     document.getElementById('qImageName').innerText = "لم يتم اختيار ملف";
@@ -307,14 +302,17 @@
             });
         }
 
-        // الاستماع اللحظي للأسئلة المرفوعة ومزامنتها تلقائياً بالأسفل فوراً
         database.ref('exam/questions').on('value', (snapshot) => {
             const listContainer = document.getElementById('cloudQuestionsList');
             const countBadge = document.getElementById('qCountBadge');
+            const studentContainer = document.getElementById('studentQuestionsContainer');
+            
             listContainer.innerHTML = "";
+            studentContainer.innerHTML = "";
             
             if (!snapshot.exists()) {
-                listContainer.innerHTML = `<p class="text-sm text-slate-500 text-center py-6">لا توجد أسئلة مرفوعة في الكراسة السحابية حالياً، ابدأ بإضافة سؤالك الأول بالاعلى!</p>`;
+                listContainer.innerHTML = `<p class="text-sm text-slate-500 text-center py-6">لا توجد أسئلة مرفوعة حالياً.</p>`;
+                studentContainer.innerHTML = `<p class="text-sm text-slate-500 text-center py-6">لم يقم المعلم بنشر أي أسئلة للاختبار بعد.</p>`;
                 countBadge.innerText = "0";
                 return;
             }
@@ -322,30 +320,37 @@
             let index = 1;
             snapshot.forEach((childSnapshot) => {
                 const q = childSnapshot.val();
+                
+                // إضافة للوحة التحكم
                 let itemHtml = `
                     <div class="p-4 rounded-xl bg-oman-navy/60 border border-slate-700/60 flex justify-between items-start gap-4">
                         <div class="flex-1">
                             <span class="text-xs font-bold text-oman-gold bg-oman-navyLight px-2 py-0.5 rounded-md border border-oman-gold/30">سؤال ${index}</span>
                             <p class="text-sm font-semibold mt-2">${q.text}</p>
                             ${q.image ? `<img src="${q.image}" class="mt-2 rounded-lg max-h-32 border border-slate-700">` : ''}
-                            ${q.type === 'MCQ' ? `<div class="grid grid-cols-2 gap-2 mt-2 text-xs text-slate-400">
-                                <div>أ) ${q.options[0]} ${q.correctIndex == 0 ? '✅' : ''}</div>
-                                <div>ب) ${q.options[1]} ${q.correctIndex == 1 ? '✅' : ''}</div>
-                                <div>ج) ${q.options[2]} ${q.correctIndex == 2 ? '✅' : ''}</div>
-                                <div>د) ${q.options[3]} ${q.correctIndex == 3 ? '✅' : ''}</div>
-                            </div>` : '<div class="text-xs text-cyan-400 mt-2">نوع السؤال: مقالي + سبورة رسم</div>'}
                         </div>
                         <button onclick="deleteQuestion('${q.id}')" class="text-xs text-red-400 hover:text-red-500 bg-red-500/10 p-2 rounded-lg transition"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 `;
                 listContainer.innerHTML += itemHtml;
+                
+                // إضافة لشاشة الطالب
+                let studentItemHtml = `
+                    <div class="p-4 rounded-xl bg-oman-navy/40 border border-slate-700">
+                        <span class="text-xs font-bold text-oman-gold">سؤال ${index} (${q.score} درجات)</span>
+                        <p class="text-sm font-semibold mt-2">${q.text}</p>
+                        ${q.image ? `<img src="${q.image}" class="mt-3 rounded-lg max-h-64 mx-auto border border-slate-700">` : ''}
+                    </div>
+                `;
+                studentContainer.innerHTML += studentItemHtml;
+                
                 index++;
             });
             countBadge.innerText = (index - 1).toString();
         });
 
         function deleteQuestion(id) {
-            if(confirm("هل أنت متأكد من حذف هذا السؤال نهائياً من السحابة؟")) {
+            if(confirm("هل أنت متأكد من حذف هذا السؤال؟")) {
                 database.ref('exam/questions/' + id).remove();
             }
         }
@@ -362,7 +367,11 @@
                 teacherImage: uploadedTeacherImgBase64 || null
             }, (error) => {
                 if(error) alert("فشل حفظ الإعدادات: " + error.message);
-                else alert("تم بث وحفظ إعدادات المنصة السحابية للطلاب بنجاح تفاعلي!");
+                else {
+                    document.getElementById('stExamTitle').innerText = title;
+                    document.getElementById('stExamSubject').innerText = subject;
+                    alert("تم بث وحفظ إعدادات المنصة السحابية بنجاح!");
+                }
             });
         }
 
